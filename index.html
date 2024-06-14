@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Coin Collector</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+    }
+
+    .loading-screen {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .loading-screen img {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .loading-screen .progress {
+      width: 100%;
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .loading-screen .progress-bar {
+      height: 100%;
+      background-color: #4CAF50;
+      border-radius: 5px;
+      width: 0%; /* Начальная ширина */
+      transition: width 0.5s ease-in-out;
+    }
+
+    .game-container {
+      width: 350px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .game-container img {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .game-container h1 {
+      margin-bottom: 10px;
+    }
+
+    .game-container .coin-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .game-container .coin-container .time {
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    .game-container button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .game-container .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .game-container .tab {
+      padding: 10px 20px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .game-container .tab.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .game-container .tab-content {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .game-container .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-container" id="loadingContainer">
+    <div class="loading-screen">
+      <img src="images/tree.jpg" alt="Логотип">
+      <div class="progress">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-container" id="gameContainer" style="display: none;">
+    <img src="images/tree.jpg" alt="Логотип">
+    <h1>Привет, [Имя пользователя]!</h1>
+
+    <div class="coin-container">
+      <div class="time">До сбора: 1 минута</div>
+      <button id="collectCoins">Собрать коины</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" id="tabTasks">Задания</div>
+      <div class="tab" id="tabReferrals">Рефералы</div>
+      <div class="tab" id="tabCollectCoins">Собрать коины</div>
+    </div>
+
+    <div class="tab-content active" id="contentTasks">
+      <p>Информация о заданиях</p>
+    </div>
+
+    <div class="tab-content" id="contentReferrals">
+      <p>Информация о рефералах</p>
+    </div>
+
+    <div class="tab-content" id="contentCollectCoins">
+      <p>Информация о сборе коинов</p>
+    </div>
+  </div>
+
+  <script>
+    const loadingContainer = document.getElementById('loadingContainer');
+    const gameContainer = document.getElementById('gameContainer');
+    const collectCoinsBtn = document.getElementById('collectCoins');
+    const timeEl = document.querySelector('.time');
+    const tabTasks = document.getElementById('tabTasks');
+    const tabReferrals = document.getElementById('tabReferrals');
+    const tabCollectCoins = document.getElementById('tabCollectCoins');
+    const contentTasks = document.getElementById('contentTasks');
+    const contentReferrals = document.getElementById('contentReferrals');
+    const contentCollectCoins = document.getElementById('contentCollectCoins');
+
+    let timeLeft = 60; // Время до сбора в секундах
+
+    function updateTimer() {
+      timeEl.textContent = `До сбора: ${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? '0' : ''}${timeLeft % 60} мин`;
+    }
+
+    function collectCoins() {
+      // Логика сбора коинов
+      console.log('Коины собраны!');
+      timeLeft = 60; // Сброс таймера
+      updateTimer();
+    }
+
+    function showTab(tabId) {
+      // Скрываем все вкладки
+      const tabs = document.querySelectorAll('.tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      // Показываем выбранную вкладку
+      document.getElementById(tabId).classList.add('active');
+      document.getElementById(`content${tabId.replace('tab', '')}`).classList.add('active');
+    }
+
+    // Обработчики событий для вкладок
+    tabTasks.addEventListener('click', () => showTab('tabTasks'));
+    tabReferrals.addEventListener('click', () => showTab('tabReferrals'));
+    tabCollectCoins.addEventListener('click', () => showTab('tabCollectCoins'));
+
+    // Обработчик события для кнопки "Собрать коины"
+    collectCoinsBtn.addEventListener('click', collectCoins);
+
+    // Имитация загрузки
+    let progress = 0;
+    const progressBar = document.querySelector('.progress-bar');
+    const loadingInterval = setInterval(() => {
+      progress += 5;
+      progressBar.style.width = `${progress}%`;
+
+      if (progress >= 100) {
+        clearInterval(loadingInterval);
+        loadingContainer.style.display = 'none';
+        gameContainer.style.display = 'block';
+      }
+    }, 500);
+
+    // Таймер
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) {
+        collectCoins();
+      }
+    }, 1000);
+
+    updateTimer();
+  </script>
+
+</body>
+</html>
